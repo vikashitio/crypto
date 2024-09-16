@@ -1,0 +1,150 @@
+{{template "partials/header" .}}
+<style>
+.accordion-button {padding: unset !important;}
+.accordion-button:not(.collapsed) {
+  background-color: unset !important;
+  box-shadow: unset !important;
+  padding: 2px 2px !important;
+  height: 30px !important;
+  
+
+}
+.img-icon { width: 40px;margin-right: 10px;}
+    .jqte_tool.jqte_tool_1 .jqte_tool_label {
+     height: unset !important;
+    }
+  </style>
+
+<div class="dashboard-main-body">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+<h6 class="fw-semibold mb-0">{{ .Title }}</h6>
+<ul class="d-flex align-items-center gap-2">
+  <li class="fw-medium">
+    <div class="col-lg-12 text-end my-2"> <a href="/add-support-ticket" class="btn btn-sm btn-primary-600" title="Add New Ticket"><i class="ri-add-line"></i> Add New Ticket</a></div>
+    
+  </li>
+ 
+</div>
+<div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+           
+          {{if .Alert}}
+            <div class="alert alert-warning alert-dismissible fade show my-2" role="alert">
+              <strong>{{.Alert}}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            {{end}}
+
+            {{if eq .Action "List"}}
+            {{if ge  .Count 1}}
+            <div class="accordion m-2" id="accordionExample">
+          <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0">
+              <thead>
+                <tr class="font-weight-bolder">
+                  <th scope="col" style="max-width: 30px !important;">&nbsp;</th>
+                  <th scope="col">Ticket #</th>
+                  <th scope="col">Timestamp</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" style="max-width: 30px !important;">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody id="none">
+                  {{range .TicketList}}
+                  <tr>
+                    <td ><span class="accordion-button88" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{.Ticket_id}}" aria-expanded="false" aria-controls="collapse{{.Ticket_id}}"><iconify-icon icon="lets-icons:view-duotone" width="30" height="30"></iconify-icon></span></td>
+                    <td>{{.Ticket_id}}</td>
+                    <td class="date-cell">{{.Timestamp}}</td>
+                    <td class="text-uppercase">{{.Ticket_subject}}</td>
+                    <td>{{if eq .Status 1}} New {{else}} Processed {{end}} </td>
+                    <td ><i class="ri-more-2-fill fw-bold mx-2"></i></td>
+                  </tr>
+                  <tr>
+                    <td class="p-0" colspan="9"> <div id="collapse{{.Ticket_id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                      <div class="accordion-body border border-warning rounded ">
+                   <div class="rows p-2">
+                   <div class="col-sm-12"><strong>ticket # :</strong> {{.Ticket_id}}</div>
+                    <div class="col-sm-12"><strong>Subject :</strong> {{.Ticket_subject}}</div>
+                    <div class="col-sm-12"><strong>Description :</strong> {{.Ticket_desc}}</div>
+                        
+                      </div>
+  
+                      </div>
+                    </div>
+                  </td>
+                    </tr>
+                {{end}}
+                <tr>
+              <td class="text-end fs-6 mx-2" colspan="9"> 
+              {{if .NextPage}}
+              <a href="?page={{.NextPage}}&limit={{.Limit}}" class="mx-4 float-end" title="Next"><iconify-icon icon="zondicons:forward" width="32" height="32"></iconify-icon></a>
+              {{end}}
+              {{if .PrevPage}}
+              <a href="?page={{.PrevPage}}&limit={{.Limit}}" class="mx-4 float-end" title="Previous"><iconify-icon icon="zondicons:backward" width="32" height="32"></iconify-icon></a>
+              {{end}}
+              {{if .Count}} <span class="mt-1 float-end mx-4"> Record : {{.Count}} </span>{{end}}
+
+
+                  </td>
+                  
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+          {{else}}
+          <h5 class="m-2 text-center fw-bold"> Ticket Not Found</h5>
+         {{end}}
+
+          {{else}}
+    
+          <form method="POST" action="/post-support-ticket" autocomplete="off">
+            
+              <div class="row">
+              
+               
+      
+              
+                <div class="col-md-12 my-2">
+                  <div class="form-floating">
+                    <input type="text" id="ticket_subject" name="ticket_subject" class="form-control" title="Subject" required="" value="">
+                    <label for="ticket_subject">Subject</label>
+                  </div>
+                </div>
+       
+                
+      
+                <div class="col-md-12 my-2">
+                  <div class="form-floating">
+                    <textarea  id="ticket_desc" name="ticket_desc" class="form-control editor" required></textarea>
+                  </div>
+                </div>
+               
+                <div class="col-md-12 my-2">
+                  <div class="form-floating">
+                <button type="submit" id="submit" class="btn btn-primary btn  btn-primary  mt-1" name="submit" title="submit" value="submit">Submit</button>
+              </div>
+          </div>
+              </div>
+              
+            </form>
+          {{end}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+
+
+  {{template "partials/footer" .}}
+
+  <link rel="stylesheet" type="text/css" href="https://jqueryte.com/css/jquery-te.css"/>
+<script src="https://jqueryte.com/js/jquery-te-1.4.0.min.js"></script>
+<script>
+	$('.editor').jqte();
+</script>

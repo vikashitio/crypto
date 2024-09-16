@@ -1,0 +1,147 @@
+{{template "partials/header" .}}
+<style>
+.accordion-button {padding: unset !important;}
+.accordion-button:not(.collapsed) {
+  background-color: unset !important;
+  box-shadow: unset !important;
+  padding: 2px 2px !important;
+  height: 30px !important;
+  
+}
+  </style>
+
+<div class="dashboard-main-body">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+<h6 class="fw-semibold mb-0">{{ .Title }}</h6>
+<ul class="d-flex align-items-center gap-2">
+  <li class="fw-medium">
+    <a href="/pay-links" title="Create Pay Link" class=""><iconify-icon icon="flat-color-icons:plus" width="32" height="32"></iconify-icon></a> <a href="/pdf" title="Download PDF" class=""><iconify-icon icon="vscode-icons:file-type-pdf2" width="32" height="32"></iconify-icon></a> <a href="/excel-download" title="Download Excel" class=""><iconify-icon icon="vscode-icons:file-type-excel2" width="32" height="32"></iconify-icon></a>
+    
+  </li>
+  
+</ul>
+</div>
+  
+  <!-- Crypto Home Widgets Start -->
+
+  <div class="row gy-4 mt-4">
+    <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+           
+          {{if .Alert}}
+            <div class="alert alert-warning alert-dismissible fade show my-2" role="alert">
+              <strong>{{.Alert}}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            {{end}}
+            {{template "partials/search-form" .}}
+            {{if ge  .Total 1}}
+            <div class="accordion m-2" id="accordionExample">
+          <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0">
+              <thead>
+                <tr class="font-weight-bolder">
+                  <th scope="col" style="max-width: 30px !important;">&nbsp;</th>
+                  <th scope="col">TransactionID</th>
+                  <th scope="col">Asset</th>
+                  <th scope="col" title="Requested Fiat Amount">Requested</th>
+                  <th scope="col" title="Converted Crypto Amount">Converted</th>
+                  <th scope="col" title="Received Crypto Amount">Received</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="none">
+                  {{range .TransactionList}}
+                  {{ $dataContext := . }}
+                  <tr>
+                    <td ><span class="accordion-button88" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{.Id}}" aria-expanded="false" aria-controls="collapse{{.Id}}"><iconify-icon icon="lets-icons:view-duotone" width="30" height="30"></iconify-icon></span></td>
+                    <td><span class="d-inline-block text-truncate" style="max-width: 150px;"></span>{{.Transaction_id}}</td></td>
+                    <td >{{range index $.CoinList}}{{if eq $dataContext.Assetid .Coin_id}}
+                      
+                      <button type="button" class="btn btn-primary btn-sm position-relative" style="height: 28px;padding-top: 5px;">
+                        {{$dataContext.Receivedcurrency}}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          {{.Coin_network}}
+                          <span class="visually-hidden">{{$dataContext.Receivedcurrency}}</span>
+                        </span>
+                      </button>
+                     
+                      <!-- <img src="/views/images/{{.Icon}}" alt="" class="w-40-px h-40-px rounded-circle flex-shrink-0"> <span class="text-uppercase">{{$dataContext.Receivedcurrency}}</span>  <span class="badge text-bg-danger">{{.Coin_network}}</span>--> {{end}}{{end}}</td>
+                    <td class="text-uppercase">{{.Requestedcurrency}} {{.Requestedamount}}</td>
+                    <td class="text-uppercase">{{.Convertedcurrency}} {{.Convertedamount}}</td>
+                    <td class="text-uppercase">{{.Receivedcurrency}} {{.Receivedamount}}</td>
+                    <td>{{if eq .Transaction_type "TRANSFER"}} 
+                      <span class="text-success-main bg-success-focus w-32-px h-32-px d-flex align-items-center justify-content-center rounded-circle text-xl">
+                       <iconify-icon icon="tabler:arrow-up-right" class="icon" title="{{.Transaction_type}}"></iconify-icon>
+                     </span>
+                     {{else}}
+                     <span class="text-danger-main bg-danger-focus w-32-px h-32-px d-flex align-items-center justify-content-center rounded-circle text-xl">
+                      <iconify-icon icon="tabler:arrow-down-left" class="icon" title="{{.Transaction_type}}"></iconify-icon>
+                     </span>
+                  {{end}}
+                </td>
+                    <td >{{if eq .Status "SUCCESS"}}<span class="bg-success-focus text-success-main px-16 py-4 radius-4 fw-medium text-sm">Success</span>{{else if eq .Status "PROCESS"}}<span class="bg-warning-focus text-warning-main px-16 py-4 radius-4 fw-medium text-sm">Process</span>{{else}}<span class="bg-danger-focus text-danger-main px-16 py-4 radius-4 fw-medium text-sm">Failed</span>{{end}}</td>
+                    <td class="date-cell">{{.Createdate}}</td>
+                  </tr>
+                  <tr>
+                    <td class="m-0 p-0" colspan="9"> <div id="collapse{{.Id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                      <div class="accordion-body border border-warning rounded p-4 ">
+                        <div class="rowx">
+                        <div class="col-sm-12 my-1"><strong>Transaction ID :</strong> {{.Transaction_id}}</div>
+                        <div class="col-sm-12 my-1"><strong>Timestamp :</strong> {{.Createdate}}</div>
+                        <div class="col-sm-12 my-1"><strong>Destination address :</strong> {{.Destinationaddress}}</div>
+                        <div class="col-sm-12 my-1"><strong>Assetid :</strong><span class=" text-uppercase">{{.Assetid}}</span></div>
+                        <div class="col-sm-12 my-1" ><strong>Requested Fiat Amount :</strong> <span class="text-uppercase">{{.Requestedcurrency}}</span> {{.Requestedamount}} </div>
+                        <div class="col-sm-12 my-1"><strong>Converted Crypto Amount :</strong> <span class="text-uppercase">{{.Convertedcurrency}}</span> {{.Convertedamount}} </div>
+                        <div class="col-sm-12 my-1"><strong>Received Crypto Amount :</strong> <span class="text-uppercase">{{.Receivedcurrency}}</span> {{.Receivedamount}} </div>
+                        <div class="col-sm-12 my-1"><strong>Status :</strong> {{.Status}}</div>
+                        <div class="col-sm-12 my-1"><strong>Txhash :</strong> {{.Response_hash}}</div>
+                        <div class="col-sm-12 my-1"><strong>Note :</strong> {{.Note}}</div>
+                        
+                      </div>
+                    </div>
+                  </div>
+                    </td>
+                    </tr>
+                {{end}}
+                <tr>
+                  <td class="text-end fs-6 mx-2" colspan="9"> 
+                    
+                    
+                    {{ if lt (mul .Page .Limit) .Total }}
+                    <a href="?page={{ add .Page 1 }}&searchKey={{ .SearchKey }}&searchBy={{ .SearchBy }}&status={{ .Status }}&date_1st={{ .Date_1st }}&date_2nd={{ .Date_2nd }}&limit={{ .Limit }}" class="mx-4 float-end"><iconify-icon icon="zondicons:forward" width="32" height="32" title="Next Page"></iconify-icon></a>
+                    {{ end }}
+                     <span class="mt-1 font-monospace mx-4 float-end" > Page {{ .Page }} Total {{ .Total }}  </span>
+                      {{ if gt .Page 1 }}
+                    <a href="?page={{ sub .Page 1 }}&searchKey={{ .SearchKey }}&searchBy={{ .SearchBy }}&status={{ .Status }}&date_1st={{ .Date_1st }}&date_2nd={{ .Date_2nd }}&limit={{ .Limit }}" class="mx-4 float-end"><iconify-icon icon="zondicons:backward" width="32" height="32" title="Previous Page"></iconify-icon></a>
+                     {{ end }}
+
+                     
+ 
+                   
+
+                  </td>
+                  
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+          {{else}}
+           <h5 class="m-2 text-center fw-bold">No Transaction Found</h5>
+          {{end}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+</div> 
+
+  {{template "partials/footer" .}}
+  {{template "partials/search-form-js" .}}

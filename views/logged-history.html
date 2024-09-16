@@ -1,0 +1,68 @@
+{{template "partials/header" .}}
+<div class="dashboard-main-body">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+<h6 class="fw-semibold mb-0">{{ .Title }}</h6>
+<ul class="d-flex align-items-center gap-2">
+  <li class="fw-medium">
+    <a href="/" class="d-flex align-items-center gap-1 hover-text-primary">
+      <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
+      Dashboard
+    </a>
+  </li>
+  <li>-</li>
+  <li class="fw-medium">{{ .Title }}</li>
+</ul>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0">
+             <thead>
+                <tr class="font-weight-bolder">
+                  <!-- <th scope="col">User&nbsp;Name</th> -->
+                  <th scope="col">Login&nbsp;Date&nbsp;/&nbsp;Time</th>
+                  <th scope="col">Logout&nbsp;Date&nbsp;/&nbsp;Time</th>
+                  <th scope="col">Login&nbsp;IP</th>
+                </tr>
+              </thead>
+              <tbody id="none">
+                  {{range .LoginHistory}}
+                <tr>
+                  <!-- <td>{{.Client_id}}</td> -->
+                  <td class="date-cell">{{.Login_time}}</td>
+                  <td class="date-cell">{{.Logout_time}}</td>
+                  <td>{{.Login_ip}}</td>
+                </tr>
+                {{end}}
+                <tr>
+                  <td class="text-end fs-6" colspan="3"> 
+                    
+                    
+              
+              {{if .NextPage}}
+                  <a href="/logged-history?page={{.NextPage}}&limit={{.Limit}}" class="mx-4 float-end" title="Next"><iconify-icon icon="zondicons:forward" width="32" height="32"></iconify-icon></a>
+              {{end}}
+              {{if .Count}} <span class="mt-1 float-end mx-4 my-4"> Record : {{.Count}} </span>{{end}}
+              {{if .PrevPage}}
+              <a href="/logged-history?page={{.PrevPage}}&limit={{.Limit}}" class="mx-4 float-end" title="Previous"><iconify-icon icon="zondicons:backward" width="32" height="32"></iconify-icon></a>
+              {{end}}
+              
+
+
+                  </td>
+                  
+                </tr>
+              </tbody>
+            </table>
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+
+  {{template "partials/footer" .}}

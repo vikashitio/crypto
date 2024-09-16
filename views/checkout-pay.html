@@ -1,0 +1,303 @@
+
+{{template "partials/support-files" .}}
+<link href="https://vikashitio.github.io/common/css/form-bg.css" rel="stylesheet">
+<style>
+    body {
+    background-color: #ffffff;
+}
+    .account-pages {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+.account-pages .box {
+    max-width: 600px !important;
+    margin: 0 auto;
+}
+.img-icon { width: 30px;margin-right: 10px;}
+.img-icon-box { max-width: 30px;}
+</style>
+
+<div class="container">
+  
+<div class="account-pages">
+  
+    <!-- end row -->
+    <div class="row justify-content-center text-white">
+      <div class="col-lg-12 box position-absolute">
+    <div class="text-center text-white my-2 "><img src="/views/images/Logo_dark.png" alt="Logo" class="img-fluid img "></div>
+        <div class="card form bg-transparent shadow" >
+          <div class="card-body text-dark">
+            <h1 class="mb-2 text-center"> Pay Now </h1>
+            {{if .Alert}}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{.Alert}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {{end}}
+
+      
+    
+       
+       <div class="px-2" id="second" >
+        <div class="row">
+            <h2 class="mb-2 text-end"> {{.InvoiceData.Requestedcurrency}} {{.InvoiceData.Requestedamount}}</h2>
+            <h4 class="mb-2 text-start"> Contact information</h4>
+          <div class="col-sm-12 my-2">
+            <label class="visually-hidden" for="specificSizeInputGroupUsername">{{.InvoiceData.Name}}</label>
+            <div class="input-group">
+              <div class="input-group-text">Name</div>
+              <input type="text" class="form-control" id="specificSizeInputGroupUsername" placeholder="{{.InvoiceData.Name}}">
+            </div>
+          </div>
+          <div class="col-sm-12 my-2">
+            <label class="visually-hidden" for="specificSizeInputGroupUsername">{{.InvoiceData.Email}}</label>
+            <div class="input-group">
+              <div class="input-group-text">Email</div>
+              <input type="text" class="form-control" id="specificSizeInputGroupUsername" placeholder="{{.InvoiceData.Email}}">
+            </div>
+          </div>
+           </div>  
+       <h4 class="my-2 text-start"> Select Crypto</h4>    
+       <div class="coin-loader text-center"></div> 
+      {{range .CoinList}}
+      
+      <div class="row my-2 p-2 rounded-pill border border-dark pointer coin process" data-cid="{{.Coin}}" data-tid="{{.Coin_id}}" title="Create {{.Coin_title}} Payment" >
+        <div class="col img-icon-box text-start px-0"><img class="img-icon" src="/views/images/{{.Icon}}"></div>
+        <div class="col px-2 fs-6 text-uppercase ">{{.Coin_title}}</div>
+        <div class="col px-2"><span class="badge text-bg-danger">{{.Coin_network}}</span></div>
+        <div class="col text-end fs-6 px-0 text-uppercase">{{.Coin}}</div>
+    </div>
+      {{end}}
+    </div>
+
+    <div class="px-2" id="third" style="display: none;">
+        <div class="card">
+            <div class="card-body border">
+                <div class="row border-bottom ">
+                    <div class="col text-start mb-2">
+                <h5 class="card-title">Send payment</h5>
+                <p class="card-text">Make your payment</p>
+            </div>
+            <div class="col text-end">
+                <div id="timer"></div>
+            </div>
+              </div>
+              <div class="row">
+                <div class="col text-center">
+            <div class="qrcodes border rounded my-2 py-3 "></div>
+        </div>
+        <div class="col pt-5">
+            <span class="m-1 fs-6 ">
+                <div class="text-center mb-2">
+             <img src="" id="coinicon" class=" px-2 " alt="..." style="height: 50px !important;"> 
+            </div>
+             <p>Only send <span  class="coincode text-uppercase"></span> to this address</p>
+             
+             <p class="text-center fs-6 fw-bold"><span id="getamountcoin1" class="text-uppercase"></span> <span class="coincode text-uppercase"></span></p>
+            </span>
+        </div>
+        </div>
+        <div class="card-body border">
+            <h5><span  class="coincode text-uppercase"></span> address</h5>
+            <span id="getaddress"></span> <h6 id="getnetworkid" class="badge text-bg-danger"></h6>
+            <h5>Transaction ID</h5>
+            <span id="transid"></span>
+          </div>
+            </div>
+            <div class="card-body">
+                              
+                <div id="statusbtn" class="text-end my-2" style="display: none;"><a id="failedlink" href="/success" class="btn btn-sm rounded-pill btn-outline-danger mx-1">Failed Transaction</a> <a id="successlink" href="/success-transaction" class="btn btn-sm rounded-pill btn-outline-success mx-1">Success Transaction</a></div>
+              <div id="replybtn" class="text-end my-2"><button type="button" class="btn btn-sm rounded-pill btn-outline-primary returnsecond"><i class="fa-solid fa-reply fa-fw mx-2"></i> Return</button></div> 
+            
+          </div>
+          </div>
+
+      </div>
+        </div>
+        
+      </div>
+    
+
+    </div>
+    
+  </div>
+ 
+
+</div>
+
+
+
+
+  {{template "partials/footer" .}}
+  <script src="/views/js/dist/jquery-qrcode.js"></script>
+  <script src="/views/js/dist/checkout.js"></script>
+ <script>   
+$('.process').click(function(){
+
+var data="";
+$(".coin-loader").html("<i class='fa-solid fa-spinner fa-spin-pulse text-warning fs-3 fw-bold'></i>");
+
+var cid=$(this).attr('data-cid');
+//alert(cid);
+var cryptoID=$(this).attr('data-tid');
+
+var sender_name = "{{.InvoiceData.Name}}";
+//alert(sender_name)
+
+var sender_email = "{{.InvoiceData.Email}}";
+//alert(sender_email)
+
+var price_currency = "{{.InvoiceData.Requestedcurrency}}".toLowerCase();
+//alert(price_currency)
+
+var price_amount = "{{.InvoiceData.Requestedamount}}";
+//alert(price_amount)
+
+var order_description = "{{.InvoiceData.Description}}";
+//alert(order_description)
+
+
+var Client_id = "{{.InvoiceData.Client_id}}";
+//alert(Client_id)
+
+
+var iid = getUrlParameter('iid');
+//alert(iid)
+
+var formData = {
+    cid: cid,
+    price_currency: price_currency,
+    price_amount: price_amount,
+    sender_name: sender_name,
+    sender_email: sender_email,
+    order_description: order_description,
+    client_id: Client_id,
+    pay_type: 1,
+    crypto_id: cryptoID,
+    customerrefid: iid
+};
+
+//alert(JSON.stringify(formData));
+$.ajax({
+url: "/pay-data",
+data: $.param(formData),
+type: "POST",
+contentType: 'application/x-www-form-urlencoded',
+success:function(data){
+
+
+
+if(data.amount){
+
+$("#second").hide();$("#third").show();
+
+        $("#getamountcoin").html(data.amount); 
+        $("#getamountcoin1").html(data.amount);
+        $("#getamountcurrency").html(price_amount + " " + price_currency);
+        $("#getaddress").html(data.address);
+        $(".coincode").html(cid);
+        $("#coinicon").attr("src","/views/images/" + data.coinicon);
+        $("#getnetworkid").html(data.coinnetwork);
+        $("#transid").html(data.transid);
+       
+
+        ///////////////////////////////////////////
+       // var timeLeft = 600;
+        var timeLeft = 100;
+        var elem = document.getElementById('timer');
+        var timerId = setInterval(countdown, 1000);
+
+function countdown() {
+    if (timeLeft == -1) {
+        clearTimeout(timerId);
+        timeLeft--;
+     } else if ((timeLeft == 75) || (timeLeft == 50) || (timeLeft == 25)|| (timeLeft == 5)) {
+
+    //} else if ( (timeLeft == 570) || (timeLeft == 480) || (timeLeft == 420)|| (timeLeft == 360)|| (timeLeft == 300)|| (timeLeft == 240) || (timeLeft == 180) || (timeLeft == 120) || (timeLeft == 60)) {
+      ////////////////
+     
+        var status_coin = $('.coincode').html();
+        var status_address = $('#getaddress').html();
+        var status_transid = $('#transid').html();
+        
+      var formDataStatus = {
+        status_coin: status_coin,
+        status_address: status_address,
+        status_transid: status_transid,
+        status_coinid: data.coin_id
+    };
+
+    
+		$.ajax({
+            url: "/check-payment-status",
+            data: $.param(formDataStatus),
+            type: "POST",
+            contentType: 'application/x-www-form-urlencoded',
+            success:function(status){
+
+                if(status.payment_status=="SUCCESS"){
+                    url = "{{$.CommonURL}}/success/"+status.payment_id;
+                    $( location ).attr("href", url);
+                }else{
+                    //alert(status.payment_status)
+                }
+
+            },
+            error:function (){}
+            });	
+
+    timeLeft--;
+    
+      ////////////////
+    
+    } else if (timeLeft == 1) {   
+       // alert("UP")
+        var status_transid = $('#transid').html();
+        url = "{{$.CommonURL}}/failed/"+status_transid;
+        $( location ).attr("href", url);
+        timeLeft--;
+    } else {
+        var timeLeftNew =formatTime(timeLeft)
+       // alert(vvv)
+        elem.innerHTML = timeLeftNew ;
+        //elem.innerHTML = timeLeft ;
+        timeLeft--;
+    }
+}
+        //////////////////////////////////////////
+
+        setTimeout(
+            function() 
+            {
+              //alert("Display Button")
+             // $("#statusbtn").show();
+              //$("#replybtn").hide();
+            }, 10000);
+
+            //$("#successlink").attr("href","{{$.CommonURL}}/success/"+data.transid); 
+           // $("#failedlink").attr("href","{{$.CommonURL}}/success/"+data.transid);
+
+}else{
+ //alert(99)
+// $(".returnfirst").click();
+ }
+
+// generate QR code
+$(".qrcodes").qrcode({
+    text: data.qr_code ,
+    size: 200
+});
+
+
+},
+error:function (){}
+});	
+
+});
+
+
+
+
+ 
+
+</script>
