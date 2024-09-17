@@ -8,9 +8,9 @@ services:
     depends_on:
       - db
     environment:
-      DB_USER: user
-      DB_PASSWORD: password
-      DB_NAME: crypto_payment
+      DB_USER: postgres
+      DB_PASSWORD: Admin
+      DB_NAME: golang
       DB_HOST: db
 
   db:
